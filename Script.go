@@ -34,8 +34,9 @@ func installGitleaks() string {
 
 	switch runtime.GOOS {
 	case "windows":
+		gitleaksPath += ".exe"
 		downloadFromURL("https://github.com/gitleaks/gitleaks/releases/download/v8.8.6/gitleaks_8.8.6_windows_x64.zip", "gitleaks.zip")
-		unzip("gitleaks.zip", gitleaksPath+".exe")
+		unzip("gitleaks.zip", gitleaksPath)
 	case "linux":
 		downloadFromURL("https://github.com/gitleaks/gitleaks/releases/download/v8.8.6/gitleaks_8.8.6_linux_x64.tar.gz", "gitleaks.tar.gz")
 		untar("gitleaks.tar.gz", gitleaksPath)
@@ -46,6 +47,9 @@ func installGitleaks() string {
 		fmt.Println("Unsupported operating system. Please install gitleaks manually.")
 		os.Exit(1)
 	}
+
+	// Enable gitleaks for this repository
+	exec.Command("git", "config", "--local", "--add", "hooks.gitleaks.enabled", "true").Run()
 
 	return gitleaksPath
 }
